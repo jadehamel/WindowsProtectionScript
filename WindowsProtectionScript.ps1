@@ -1,12 +1,38 @@
 Protection Script - God Mode-Firewall-Option Enabler - Wifi setting - Disable Updates - CleanUp - Remote disabler
 
-## Download: https://learn.microsoft.com/en-us/sysinternals/downloads/psexec
-###### RUN THIS (SYSTEM)
-& PsExec.exe -i -s powershell
+# Liste des services à désactiver et supprimer
+$servicesToDisable = @(
+  "DiagTrack", "dmwappushservice", "Wecsvc", "WerSvc", # Surveillance / Télémétrie
+  "RemoteRegistry", "WinRM", "SessionEnv", "TermService", "UmRdpService", # Gestion à distance
+  "Netlogon", "RasAuto", "RemoteAccess", # Services liés aux organisations
+  "SharedAccess", "PeerDistSvc", "WpnService" # Services de partage réseau et notifications
+)
+
+foreach ($service in $servicesToDisable) {
+  # Vérifie si le service existe
+  $serviceObj = Get-Service -Name $service -ErrorAction SilentlyContinue
+  if ($serviceObj) {
+    Write-Host "Traitement du service : $service"
+
+    # Stoppe le service s'il est en cours d'exécution
+    if ($serviceObj.Status -eq "Running") {
+      Write-Host " - Arrêt du service..."
+      Stop-Service -Name $service -Force
+    }
+
+    # Désactive le service
+    Write-Host " - Désactivation du service..."
+    Set-Service -Name $service -StartupType Disabled
+
+    # Suppression du service si possible
+    Write-Host " - Suppression du service..."
+    sc.exe delete $service | Out-Null
+  } else {
+    Write-Host " - Service $service introuvable ou déjà supprimé."
+  }
+}
 
 
-
-##### Protection Script #######
 
 
 # Activer le mode God Mode
