@@ -7,6 +7,9 @@ $servicesToDisable = @(
   "Netlogon", "RasAuto", "RemoteAccess", # Services liés aux organisations
   "SharedAccess", "PeerDistSvc", "WpnService" # Services de partage réseau et notifications
 )
+Stop-Service -Name TrustedInstaller -Force
+Set-Service -Name TrustedInstaller -StartupType Manual
+
 
 foreach ($service in $servicesToDisable) {
   # Vérifie si le service existe
