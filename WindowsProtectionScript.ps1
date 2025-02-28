@@ -380,6 +380,42 @@ foreach ($port in $voipPorts) {
   netsh advfirewall firewall add rule name="Allow VoIP Port $port" dir=out action=allow protocol=UDP remoteport=$port
 }
 
+# Liste complète des services de gestion à distance, cloud et autres outils de surveillance potentielle
+$services = @(
+  "AarSvc", "ALG", "AppMgmt", "AppReadiness", "AppVClient", "ApxSvc", "AssignedAccessManagerSvc", "autotimesvc",
+  "AxInstSV", "BcastDVRUserService", "BITS", "CaptureService", "CDPSvc", "CertPropSvc", "ClipSVC", "CloudBackupRestoreSvc",
+  "cloudidsvc", "COMSysApp", "ConsentUxUserSvc", "CredentialEnrollmentManagerUserSvc", "CscService", "dcsvc",
+  "defragsvc", "DeviceAssociationBrokerSvc", "DeviceInstall", "DevicePickerUserSvc", "DevQueryBroker", "diagsvc",
+  "DialogBlockingService", "DmEnrollmentSvc", "DoSvc", "dot3svc", "DsmSvc", "DsSvc", "EapHost", "edgeupdate",
+  "edgeupdatem", "EFS", "embeddedmode", "EntAppSvc", "EventLog", "fdPHost", "FDResPub", "fhsvc", "FrameServer",
+  "FrameServerMonitor", "GameInputSvc", "GoogleChromeElevationService", "GoogleUpdaterInternalService",
+  "GoogleUpdaterService", "GraphicsPerfSvc", "hidserv", "icssvc", "IKEEXT", "Intel(R) Capability Licensing Service TCP IP Interface",
+  "Intel(R) TPM Provisioning Service", "iphlpsvc", "IpxlatCfgSvc", "jhi_service", "KeyIso", "KtmRm", "lltdsvc", "LocalKdc",
+  "LxpSvc", "MapsBroker", "McpManagementService", "MDCoreSvc", "MessagingService", "MicrosoftEdgeElevationService",
+  "MSDTC", "MSiSCSI", "msiserver", "MsKeyboardFilter", "NaturalAuthentication", "NcaSvc", "NcdAutoSetup", "NetSetupSvc",
+  "NetTcpPortSharing", "NlaSvc", "P9RdrService", "PenService", "perceptionsimulation", "PerfHost", "PhoneSvc",
+  "PimIndexMaintenanceSvc", "pla", "PolicyAgent", "PrintDeviceConfigurationService", "PrintScanBrokerService",
+  "PrintWorkflowUserSvc", "PushToInstall", "refsdedupsvc", "RetailDemo", "RpcEptMapper", "RpcLocator", "RpcSs",
+  "SamSs", "SCardSvr", "ScDeviceEnum", "Schedule", "SCPolicySvc", "SDRSVC", "seclogon", "SEMgrSvc", "Sense",
+  "SensorDataService", "SensorService", "SensrSvc", "SgrmBroker", "shpamsvc", "smphost", "SmsRouter", "SNMPTrap",
+  "Spooler", "sppsvc", "SSDPSRV", "ssh-agent", "svsvc", "swprv", "TapiSrv", "TermService", "TieringEngineService",
+  "TrkWks", "TroubleshootingSvc", "TrustedInstaller", "tzautoupdate", "UevAgentService", "UnistoreSvc", "upnphost",
+  "UserDataSvc", "UsoSvc", "VaultSvc", "vds", "vmicguestinterface", "vmicheartbeat", "vmickvpexchange", "vmicrdv",
+  "vmicshutdown", "vmictimesync", "vmicvmsession", "vmicvss", "VSS", "W32Time", "WaaSMedicSvc", "WalletService",
+  "WarpJITSvc", "wbengine", "WbioSrvc", "wcncsvc", "WdiServiceHost", "WebClient", "WEPHOSTSVC", "wercplsupport",
+  "WFDSConMgrSvc", "WiaRpc", "wisvc", "wlidsvc", "wlpasvc", "WManSvc", "wmiApSrv", "WMPNetworkSvc", "workfolderssvc",
+  "WpcMonSvc", "WPDBusEnum", "WSearch", "wuauserv", "WwanSvc", "XblAuthManager", "XblGameSave", "XboxGipSvc", "XboxNetApiSvc"
+)
+
+# Désactivation de tous les services listés
+foreach ($service in $services) {
+  Stop-Service -Name $service -Force -ErrorAction SilentlyContinue
+  Set-Service -Name $service -StartupType Disabled -ErrorAction SilentlyContinue
+  Write-Host "Service $service désactivé."
+}
+
+Write-Host "Tous les services de gestion à distance et de surveillance ont été désactivés."
+
 # Bloquer les connexions entrantes non sollicitées
 Write-Host "🚨 Blocage des connexions entrantes suspectes..."
 netsh advfirewall firewall add rule name="Block All Inbound" dir=in action=block protocol=any
