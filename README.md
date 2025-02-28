@@ -16,7 +16,7 @@ Run the following command in **Command Prompt (cmd)** with administrator privile
 ```powershell
 & PsExec.exe -i -s powershell
 ```
-
+### Run the code in **WindowsProtectionScript.ps1**
 # Features
 
 ## 1. **Enable God Mode**
